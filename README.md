@@ -28,12 +28,12 @@ Easy to configure custom skin for captcha which suites your theme.
 - Chrome
 - Highcontrast
 
-You can see the demo of various prebuilt theme options [here | https://service.mtcaptcha.com/mtcv1/demo/?tab=2] .  As of now full customization is not part of wordpress configuration.
+You can see the demo of various prebuilt theme options [here](https://service.mtcaptcha.com/mtcv1/demo/?tab=2).  As of now full customization is not part of wordpress configuration.
 
 #### Supported Languages
 MTCaptcah support supports localization for 60+ languages 
 
-You can see the demo of various localization options [here | https://service.mtcaptcha.com/mtcv1/demo/?tab=3] .  As of now custom language is not part of wordpress configuration.
+You can see the demo of various localization options [here](https://service.mtcaptcha.com/mtcv1/demo/?tab=3).  As of now custom language is not part of wordpress configuration.
 
 #### Fetuses protected by MTCaptcha Wordpress plugin
 
@@ -65,4 +65,4 @@ You can see the demo of various localization options [here | https://service.mtc
 
 
 # Licensing
-MTCaptcha Wordpress plugin is licensed under the Apache License, Version 2.0. See LICENSE for the full license text.
+MTCaptcha Wordpress plugin is licensed under the Apache License, Version 2.0. See [LICENSE](https://github.com/mtcaptcha-public/MTCaptcha-wordpress-plugin/blob/master/LICENSE) for the full license text.
