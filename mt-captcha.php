@@ -241,7 +241,7 @@ function frontend_mt_script() {
 	function mt_load_script(){ ?>
 		<script type="text/javascript">
 		  (function(){var mt_service = document.createElement('script');mt_service.async = true;mt_service.src = 'https://service.mtcaptcha.com/mtcv1/client/mtcaptcha.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_service);
-		var mt_service2 = document.createElement('script');mt_service2.async = true;mt_service2.src = 'https://service2.mtcaptcha.comm/mtcv1/client/mtcaptcha2.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_service2);}) ();
+		var mt_service2 = document.createElement('script');mt_service2.async = true;mt_service2.src = 'https://service2.mtcaptcha.com/mtcv1/client/mtcaptcha2.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_service2);}) ();
 		</script><?php
 	}
 	add_action ( 'wp_head', 'mt_load_script' );
@@ -258,7 +258,7 @@ function mt_verify() {
 	if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mtcaptcha-verifiedtoken"])) {
 		$mt_site_private_key = filter_var(get_option("mt_site_private_key"), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$mtcaptchaVerifiedtoken = filter_input(INPUT_POST, "mtcaptcha-verifiedtoken", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-		$response = wp_remote_get("https://dev-service.sadtron.com/mtcv1/api/checktoken?privatekey={$mt_site_private_key}&token={$mtcaptchaVerifiedtoken}");
+		$response = wp_remote_get("https://service.mtcaptcha.com/mtcv1/api/checktoken?privatekey={$mt_site_private_key}&token={$mtcaptchaVerifiedtoken}");
 		$response = json_decode($response["body"], 1);
 		if ($response["success"]) {
 			return true;
