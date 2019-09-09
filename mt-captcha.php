@@ -1,7 +1,7 @@
 <?php
 /*
 * Plugin Name: MTCaptcha
-* Description: MTCaptcha is a efficient security soultion to protect yoru wordpress website against spam commetns and brute-force attacks.  It can be integrated with the comments, login, registartion, forgot password and woocommerce checkout
+* Description: MTCaptcha is a efficient security solution to protect your wordpress website against spam comments and brute-force attacks.  It can be integrated with the comments, login, registration, forgot password and woocommerce checkout
 * Version: 1.0
 * Author: MTCaptcha
 * Author URI: https://www.mtcaptcha.com
@@ -254,24 +254,35 @@ function mt_display() {
 	echo "<div class=\"mtcaptcha\"></div>";
 }
 
-function mt_verify($input) {
+function mt_verify() {
 	if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mtcaptcha-verifiedtoken"])) {
 		$mt_site_private_key = filter_var(get_option("mt_site_private_key"), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$mtcaptchaVerifiedtoken = filter_input(INPUT_POST, "mtcaptcha-verifiedtoken", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$response = wp_remote_get("https://service.mtcaptcha.com/mtcv1/api/checktoken?privatekey={$mt_site_private_key}&token={$mtcaptchaVerifiedtoken}");
 		$response = json_decode($response["body"], 1);
-		$message = "<p><strong>".__("ERROR:", "mtcaptcha")."</strong> ".__("MTCaptcha verification failed.", "mtcaptcha")."</p>";
-		
 		if ($response["success"]) {
-			return $input;
-		} elseif (is_array($input)) {
-			wp_die($message, "mtcaptcha", array("response" => 403, "back_link" => 1));
+			return true;
 		} else {
-			return new WP_Error("mtcaptcha", $message);
+			return false;
 		}
 	} else {
-		echo $response;
 		wp_die($message, "MTCaptcha", array("response" => 403, "back_link" => 1));
+	}
+}
+
+function mt_common_verify($input){
+	if (mt_verify()) {
+		return $input;
+	} else {
+		$message = "<p><strong>".__("ERROR:", "mtcaptcha")."</strong> ".__("MTCaptcha verification failed.", "mtcaptcha")."</p>";
+		return new WP_Error("mtcaptcha", $message);
+	}
+}
+
+function mt_wc_checkout_verify($data, $errors) {
+	if (!mt_verify()) {
+		$message = "<p><strong>".__("ERROR:", "mtcaptcha")."</strong> ".__("MTCaptcha verification failed.", "mtcaptcha")."</p>";
+		$errors->add( 'validation', $message );
 	}
 }
 
@@ -306,11 +317,11 @@ function mt_check() {
 		}
 
 		if (!$checkboxOptions['wc_checkout']) {
-			array_push($mt_verify_list, "woocommerce_after_checkout_validation");
+			add_action("woocommerce_after_checkout_validation", "mt_wc_checkout_verify", 10, 2 );
 		}
 		
 		foreach($mt_verify_list as $mt_verify) {
-			add_action($mt_verify, "mt_verify");
+			add_action($mt_verify, "mt_common_verify");
 		}
 	}
 }
