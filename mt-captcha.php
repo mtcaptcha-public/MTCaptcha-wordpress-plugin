@@ -5,7 +5,7 @@
 * Version: 1.0
 * Author: MTCaptcha
 * Author URI: https://www.mtcaptcha.com
-* License: GPL3
+* License: Apache License, Version 2.0
 * Text Domain: mtcaptcha
 */
 
