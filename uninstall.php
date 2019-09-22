@@ -3,10 +3,10 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	die( 'Direct access not allowed!' );
 }
 
-function mt_delete($array) {
+function mt_captcha_delete($array) {
 	foreach ($array as $one) {
-		delete_option("mt_{$one}");
+		delete_option("mt_captcha_{$one}");
 	}	
 }
 
-mt_delete(array("mt_site_key", "mt_site_private_key", "mt_theme", "mt_lang", "disable_mtcaptcha"));
+mt_captcha_delete(array("mt_captcha_site_key", "mt_captcha_site_private_key", "mt_captcha_theme", "mt_captcha_lang", "mt_captcha_disable_mtcaptcha"));
