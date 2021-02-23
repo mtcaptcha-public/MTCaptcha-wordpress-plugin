@@ -394,8 +394,8 @@ class mtcaptcha
         add_settings_section("mt_captcha_header_section", __("<h2 id='mtcaptcha_head' >MTCaptcha Common Settings</h2>", "mtcaptcha"), "mt_captcha_display_content", "mt-options");         
 
         $fields = [
-            ['id' => self::MT_OPTION_SITE_KEY, 'label' => __('Site Key', 'mtcaptcha')],
-            ['id' => self::MT_OPTION_PRIVATE_KEY, 'label' => __('Private Key', 'mtcaptcha')],
+            ['id' => self::MT_OPTION_SITE_KEY, 'label' => __("Site Key <sup id='site_astrik' class='required'>*</sup>", 'mtcaptcha')],
+            ['id' => self::MT_OPTION_PRIVATE_KEY, 'label' => __("Private Key <sup id='prvte_astrik' class='required'>*</sup>", 'mtcaptcha')],
             ['id' => self::MT_OPTION_ENABLE, 'label' => __('Enable MTCaptcha for', 'mtcaptcha')],
             ['id' => self::MT_OPTION_ENABLE_CAPTCHA_FOR_FORMS, 'label' => __('Enable MTCaptcha', 'mtcaptcha')],
             ['id' => self::MT_OPTION_SHOW_CAPTCHA_LABEL, 'label' => __('Show Captcha label in the form', 'mtcaptcha')],
@@ -600,6 +600,12 @@ class mtcaptcha
             add_action("woocommerce_after_checkout_validation", array($this, "mt_captcha_wc_checkout_verify"), 10, 2 );
         }
 
+        // if ((!empty($checkbox_options['contact_form'])) 
+        // && (($mt_captcha_enable == "logout" && !is_user_logged_in())
+        // || $mt_captcha_enable == "all" ||  ($mt_captcha_enable == "login" && is_user_logged_in()) ))  {
+        //     add_action( 'wpcf7_admin_init', 'iqfix_wpcf7_add_tag_generator_mtcaptcha', 45 );
+        // }
+
         $mtcDisplay = 'mt_captcha_display';
         $mtcVerify = 'mt_captcha_common_verify';
 
@@ -613,6 +619,18 @@ class mtcaptcha
 
     }
     
+    // function iqfix_wpcf7_add_tag_generator_mtcaptcha() {
+
+    //     $tag_generator = WPCF7_TagGenerator::get_instance();
+    //     $tag_generator->add(
+    //         'mtcaptcha',
+    //         esc_html__( 'mtcaptcha', 'wpcf7-mtcaptcha' ),
+    //         'iqfix_wpcf7_tag_generator_mtcaptcha',
+    //         array( 'nameless' => 1 )
+    //     );
+    
+    // }
+
     public function run()
     {
         $this->pluginName = get_file_data(__FILE__, ['Name' => 'Plugin Name'])['Name'];
@@ -628,12 +646,12 @@ class mtcaptcha
         $this->language = filter_var(get_option(self::MT_OPTION_LANGUAGE), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $this->widgetSize = filter_var(get_option(self::MT_OPTION_WIDGET_SIZE), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $this->theme = get_option(self::MT_OPTION_THEME);
-        $this->loginFormCheckbox = $checkbox_options['login'];
-        $this->registrationFormCheckbox = $checkbox_options['lost_password'];
-        $this->lostPasswordFormCheckbox = $checkbox_options['registration'];
-        $this->resetPasswordFormCheckbox = $checkbox_options['reset_password'];
-        $this->commentFormCheckbox = $checkbox_options['comment'];
-        $this->woocommerceFormCheckbox = $checkbox_options['wc_checkout'];
+        $this->loginFormCheckbox =  isset($checkbox_options['login']);
+        $this->registrationFormCheckbox =  isset($checkbox_options['registration']);
+        $this->lostPasswordFormCheckbox =  isset($checkbox_options['lost_password']);
+        $this->resetPasswordFormCheckbox =  isset($checkbox_options['reset_password']);
+        $this->commentFormCheckbox =  isset($checkbox_options['comment']);
+        $this->woocommerceFormCheckbox =  isset($checkbox_options['wc_checkout']);
         $this->captchaLabel = get_option(self::MT_OPTION_SHOW_CAPTCHA_LABEL);
         $this->jsonValue = get_option(self::MT_OPTION_ENABLE_JSON_VALUE);
         $this->jsonElement = get_option(self::MT_OPTION_JSON_VALUE);
