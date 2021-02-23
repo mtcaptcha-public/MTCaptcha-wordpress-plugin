@@ -467,7 +467,7 @@ class mtcaptcha
         global $message_statement;
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mtcaptcha-verifiedtoken"])) {
             $mtcaptchaVerifiedtoken = filter_input(INPUT_POST, "mtcaptcha-verifiedtoken", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            $response = wp_remote_get("https://qa-service.sadtron.com/mtcv1/api/checktoken?privatekey={$this->privateKey}&token={$mtcaptchaVerifiedtoken}");
+            $response = wp_remote_get("https://service.mtcaptcha.com/mtcv1/api/checktoken?privatekey={$this->privateKey}&token={$mtcaptchaVerifiedtoken}");
             $response = json_decode($response["body"], 1);
             if ($response["success"]) {
                 return true;
@@ -542,8 +542,8 @@ class mtcaptcha
                             )));
             function mt_captcha_load_script(){ ?>
                 <script type="text/javascript">
-                    (function(){var mt_captcha_service = document.createElement('script');mt_captcha_service.async = true;mt_captcha_service.src = 'https://qa-service.sadtron.com/mtcv1/client/mtcaptcha.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service);
-                var mt_captcha_service2 = document.createElement('script');mt_captcha_service2.async = true;mt_captcha_service2.src = 'https://qa-service.sadtron.com/mtcv1/client/mtcaptcha2.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service2);
+                    (function(){var mt_captcha_service = document.createElement('script');mt_captcha_service.async = true;mt_captcha_service.src = 'https://service.mtcaptcha.com/mtcv1/client/mtcaptcha.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service);
+                var mt_captcha_service2 = document.createElement('script');mt_captcha_service2.async = true;mt_captcha_service2.src = 'https://service2.mtcaptcha.com/mtcv1/client/mtcaptcha2.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service2);
                 }) ();
                 </script><?php
             }            
