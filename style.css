@@ -3,9 +3,6 @@ hr {
     height: 1px;
     background-image: linear-gradient(to right, rgba(5, 10, 12, 0.8), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
-#prvte_astrik {
-    color:red;
-}
 
 #mt_captcha_json_value {
     width:78%;
@@ -13,4 +10,8 @@ hr {
 
 #mt_captcha_site_private_key {
     width: 68%;
+}
+
+.required {
+	color: red;
 }
