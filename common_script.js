@@ -33,20 +33,21 @@ function check_validation() {
 }
 
 function custom_captcha_enable_or_disable() {
-    var site_key = document.getElementById('mt_site_key');
-    site_key.style.color = "red";
+    var site_astrik = document.getElementById('site_astrik');
+    site_astrik.style.color = "red";
     if (document.getElementById("mt_captcha_enable_json_value_check_disable").checked == true) {            
         document.getElementById("mt_site_key").disabled = true;
         document.getElementById("mt_captcha_theme").disabled = true;
         document.getElementById("mt_captcha_lang").disabled = true;
         document.getElementById("mt_captcha_widget_size").disabled = true;
         document.getElementById("mt_captcha_json_value").disabled = false;
-        
+        site_astrik.innerHTML = "";
     } else {            
         document.getElementById("mt_site_key").disabled = false;
         document.getElementById("mt_captcha_theme").disabled = false;
         document.getElementById("mt_captcha_lang").disabled = false;
         document.getElementById("mt_captcha_widget_size").disabled = false;
-        document.getElementById("mt_captcha_json_value").disabled = true;          
+        document.getElementById("mt_captcha_json_value").disabled = true;
+        site_astrik.innerHTML = "*";             
     }
 }
