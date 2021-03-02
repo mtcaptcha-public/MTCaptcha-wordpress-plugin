@@ -2,7 +2,7 @@
 /*
 * Plugin Name: MTCaptcha WordPress Plugin
 * Description: MTCaptcha is a efficient security solution to protect your wordpress website against spam comments and brute-force attacks.  It can be integrated with the comments, login, registration, forgot password, contact form 7 and woocommerce checkout
-* Version: 2.7.0
+* Version: 2.7.2
 * Author: MTCaptcha
 * Author URI: https://www.mtcaptcha.com
 * License: Apache License, captchaLabel 2.0
@@ -41,6 +41,7 @@ class mtcaptcha
     private $resetPasswordFormCheckbox;
     private $commentFormCheckbox;
     private $woocommerceFormCheckbox;
+    private $contactFormCheckbox;
     private $privateKey;
     private $siteKey;
     private $enableCaptcha;
@@ -56,6 +57,7 @@ class mtcaptcha
     public function __construct()
     {
         add_action('init', [$this, 'run']);
+        add_action( 'wpcf7_init', [$this, 'mt_wpcf7_add_mtcaptcha_tag'], 20 );
         add_action('activated_plugin', [$this, 'activation']);
     }
 
@@ -169,7 +171,8 @@ class mtcaptcha
             'lost_password'  => __( 'Lost Password Form', 'mtcaptcha' ),
             'reset_password' => __( 'Reset Password Form', 'mtcaptcha' ),
             'comment'        => __( 'Comment Form', 'mtcaptcha' ),
-            'wc_checkout'    => __( 'WooCommerce Checkout', 'mtcaptcha' )
+            'wc_checkout'    => __( 'WooCommerce Checkout', 'mtcaptcha' ),
+            'contact_form'    => __( 'Contact Form 7', 'mtcaptcha' )
         );
         foreach( $wp_forms as $formId => $formName ) {
             if(sizeof($checkbox_options) == 0) {
@@ -441,12 +444,19 @@ class mtcaptcha
 
     function mt_captcha_wc_checkout_verify($data, $errors) {
         global $message_statement;    
-        if (!mt_captcha_verify()) {
+        if (!$this->mt_captcha_verify()) {
             $message = $message_statement;
             $errors->add( 'validation', $message . "<br/>");
         }
     }
 
+    function mt_captcha_comment_and_contact_form_verify($spam) {
+        if ($this->mt_captcha_verify()) {        
+           return false;
+        } else {
+           return true;       
+        }
+    }
 
     function mt_captcha_common_verify($input) {    
         global $message_statement;
@@ -543,7 +553,7 @@ class mtcaptcha
             function mt_captcha_load_script(){ ?>
                 <script type="text/javascript">
                     (function(){var mt_captcha_service = document.createElement('script');mt_captcha_service.async = true;mt_captcha_service.src = 'https://service.mtcaptcha.com/mtcv1/client/mtcaptcha.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service);
-                var mt_captcha_service2 = document.createElement('script');mt_captcha_service2.async = true;mt_captcha_service2.src = 'https://service2.mtcaptcha.com/mtcv1/client/mtcaptcha2.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service2);
+                var mt_captcha_service2 = document.createElement('script');mt_captcha_service2.async = true;mt_captcha_service2.src = 'https://service.mtcaptcha.com/mtcv1/client/mtcaptcha2.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service2);
                 }) ();
                 </script><?php
             }            
@@ -575,8 +585,8 @@ class mtcaptcha
         if (!empty($this->registrationFormCheckbox)
         && (($this->enableCaptcha == "logout" && !is_user_logged_in())
         || $this->enableCaptcha == "all" ||  ($this->enableCaptcha == "login" && is_user_logged_in()) ))  {
-            array_push($mt_display_list, "register_form", "woocommerce_register_form");
-            array_push($mt_captcha_verify_list, "registration_errors", "woocommerce_registration_errors");
+            array_push($mt_display_list, "bp_after_signup_profile_fields", "register_form", "woocommerce_register_form");
+            array_push($mt_captcha_verify_list, "bp_signup_validate", "registration_errors", "woocommerce_registration_errors");
         }
         
         if (!empty($this->commentFormCheckbox) 
@@ -600,12 +610,6 @@ class mtcaptcha
             add_action("woocommerce_after_checkout_validation", array($this, "mt_captcha_wc_checkout_verify"), 10, 2 );
         }
 
-        // if ((!empty($checkbox_options['contact_form'])) 
-        // && (($mt_captcha_enable == "logout" && !is_user_logged_in())
-        // || $mt_captcha_enable == "all" ||  ($mt_captcha_enable == "login" && is_user_logged_in()) ))  {
-        //     add_action( 'wpcf7_admin_init', 'iqfix_wpcf7_add_tag_generator_mtcaptcha', 45 );
-        // }
-
         $mtcDisplay = 'mt_captcha_display';
         $mtcVerify = 'mt_captcha_common_verify';
 
@@ -619,17 +623,40 @@ class mtcaptcha
 
     }
     
-    // function iqfix_wpcf7_add_tag_generator_mtcaptcha() {
+    function mt_wpcf7_mtcaptcha_form_tag_handler( $tag ) {
+        $contactFormId = "contact-form-".strval(rand());
+        $this->pushTorenderQueue($contactFormId);
+        $contact_html = '';
+        if(get_option("mt_captcha_show_captcha_label_form") == TRUE){
+            $contact_html =  "<label for='mtcaptcha'>Captcha <span class='required'>*</span> </label>";    
+        }
+        $contact_html = $contact_html .'<div id="'.$contactFormId.'" class="wpcf7-form-control-wrap">%s</div>';
+        return sprintf( $contact_html , '' );
+    }
 
-    //     $tag_generator = WPCF7_TagGenerator::get_instance();
-    //     $tag_generator->add(
-    //         'mtcaptcha',
-    //         esc_html__( 'mtcaptcha', 'wpcf7-mtcaptcha' ),
-    //         'iqfix_wpcf7_tag_generator_mtcaptcha',
-    //         array( 'nameless' => 1 )
-    //     );
+    function mt_wpcf7_add_mtcaptcha_tag() {
+        $checkbox_options = (!empty(get_option("mt_captcha_disable_mtcaptcha"))) ? get_option("mt_captcha_disable_mtcaptcha") : [];
+        if (empty(isset($checkbox_options['contact_form'])))  {
+            return;
+        }
+        wpcf7_remove_form_tag( 'mtcaptcha' );
+        wpcf7_add_form_tag(
+            'mtcaptcha',
+            [$this, 'mt_wpcf7_mtcaptcha_form_tag_handler'],
+            array( 'display-block' => true )
+        );
+        add_filter( 'wpcf7_spam', [$this, 'mt_captcha_comment_and_contact_form_verify'], 10, 1 );
+    }
+    function mt_wpcf7_add_tag_generator_mtcaptcha() {
+        $tag_generator = WPCF7_TagGenerator::get_instance();
+        $tag_generator->add(
+            'mtcaptcha',
+            esc_html__( 'MTCaptcha', 'wpcf7-mtcaptcha' ),
+            'mt_wpcf7_tag_generator_mtcaptcha',
+            array( 'nameless' => 1 )
+        );
     
-    // }
+    }
 
     public function run()
     {
@@ -652,6 +679,7 @@ class mtcaptcha
         $this->resetPasswordFormCheckbox =  isset($checkbox_options['reset_password']);
         $this->commentFormCheckbox =  isset($checkbox_options['comment']);
         $this->woocommerceFormCheckbox =  isset($checkbox_options['wc_checkout']);
+        $this->contactFormCheckbox =  isset($checkbox_options['contact_form']);
         $this->captchaLabel = get_option(self::MT_OPTION_SHOW_CAPTCHA_LABEL);
         $this->jsonValue = get_option(self::MT_OPTION_ENABLE_JSON_VALUE);
         $this->jsonElement = get_option(self::MT_OPTION_JSON_VALUE);
