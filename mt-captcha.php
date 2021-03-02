@@ -553,7 +553,7 @@ class mtcaptcha
             function mt_captcha_load_script(){ ?>
                 <script type="text/javascript">
                     (function(){var mt_captcha_service = document.createElement('script');mt_captcha_service.async = true;mt_captcha_service.src = 'https://service.mtcaptcha.com/mtcv1/client/mtcaptcha.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service);
-                var mt_captcha_service2 = document.createElement('script');mt_captcha_service2.async = true;mt_captcha_service2.src = 'https://service.mtcaptcha.com/mtcv1/client/mtcaptcha2.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service2);
+                var mt_captcha_service2 = document.createElement('script');mt_captcha_service2.async = true;mt_captcha_service2.src = 'https://service2.mtcaptcha.com/mtcv1/client/mtcaptcha2.min.js';(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(mt_captcha_service2);
                 }) ();
                 </script><?php
             }            
