@@ -63,22 +63,24 @@ You can see the demo of various localization options [here](https://service.mtca
 - Rest password form protection
 - Product checkout protection
 
+##### Contact Form 7
+- Protect any form created using Contact Form 7 Plugin 
 
 ### MTCaptcha Wordpress plugin Project Roadmap
-### Release 2.7.2 (Released) =
+### Release 2.7.2 (Released)
 - Latest wordpress support 
 - BuddyPress support
 - Bug Fixes
 
-### Release 2.5.0 (Released) =
+### Release 2.5.0 (Released)
 - Custom Configuration Support
 - Show Captcha Label based on the configuration
 - Bug Fixes
 
-### Release 1.3 (Released) =
+### Release 1.3 (Released)
 - Bug Fixes to support for rendering captcha for multiple forms in the same page
 
-### Release 1.2 (Released) =
+### Release 1.2 (Released)
 - Bug Fixes
 
 #### Release 1.1 (In Development)
