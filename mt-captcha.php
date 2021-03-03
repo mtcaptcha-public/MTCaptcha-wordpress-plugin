@@ -2,7 +2,7 @@
 /*
 * Plugin Name: MTCaptcha WordPress Plugin
 * Description: MTCaptcha is a efficient security solution to protect your wordpress website against spam comments and brute-force attacks.  It can be integrated with the comments, login, registration, forgot password, contact form 7 and woocommerce checkout
-* Version: 2.7.2
+* Version: 2.7.3
 * Author: MTCaptcha
 * Author URI: https://www.mtcaptcha.com
 * License: Apache License, captchaLabel 2.0
@@ -129,7 +129,6 @@ class mtcaptcha
 
     public function menu()
     {
-        $this->enqueue_main();
         add_submenu_page('options-general.php', $this->pluginName, 'MTCaptcha', 'manage_options', 'mt_options', [$this, 'options_page']);
         add_action('admin_init', [$this, 'display_options']);
     }
@@ -689,7 +688,7 @@ class mtcaptcha
         add_filter(sprintf('plugin_action_links_%s', plugin_basename(__FILE__)), [$this, 'action_links']);
         add_action('admin_menu', [$this, 'menu']);
 
-        if (!is_user_logged_in() && !wp_doing_ajax()) {
+        if (!is_admin()) {
             $this->frontend();
         }
     }
